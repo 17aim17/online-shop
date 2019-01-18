@@ -1,10 +1,12 @@
 const mongoose = require('mongoose')
+const bcrypt =require('bcryptjs')
 const UserSchema = new mongoose.Schema({
-  name: {
+
+  email: {
     type: String,
     required: true
   },
-  email: {
+  password: {
     type: String,
     required: true
   },
@@ -21,6 +23,7 @@ const UserSchema = new mongoose.Schema({
       }
     }]
   }
+
 }, {
   timestamps: true
 })
@@ -48,17 +51,34 @@ UserSchema.methods.addToCart = function (product) {
   return this.save();
 };
 
-UserSchema.methods.removeFromCart =function(productId){
-  const updatedCartItems =this.cart.items.filter(item=>{
-    return item.productId.toString() !==productId.toString()
+UserSchema.methods.removeFromCart = function (productId) {
+  const updatedCartItems = this.cart.items.filter(item => {
+    return item.productId.toString() !== productId.toString()
   })
-  this.cart.items =updatedCartItems
+  this.cart.items = updatedCartItems
   return this.save()
 }
 
-UserSchema.methods.clearCart =function(){
-  this.cart = { items:[]}
+UserSchema.methods.clearCart = function () {
+  this.cart = {
+    items: []
+  }
   return this.save()
 }
+
+
+UserSchema.pre('save',function(next){
+  let user =this;
+    if(user.isModified('password')){
+      bcrypt.genSalt(12,(err ,salt)=>{
+          bcrypt.hash(user.password ,salt, (err,hash)=>{
+            user.password =hash   
+            next();   
+          })
+      })
+    }else{
+      next();
+    }
+})
 
 module.exports = mongoose.model('User', UserSchema);

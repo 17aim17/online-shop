@@ -3,10 +3,21 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const objectID = require('mongodb').ObjectID
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+const csrf = require('csurf')
+const flash = require('connect-flash')
+
 const errorController = require('./controllers/error');
 const mongoConnect = require('./util/db')
 const User = require('./models/user');
 const app = express();
+const csrfProtection = csrf()
+
+const store = new MongoDBStore({
+    uri: 'mongodb+srv://penzero:9Ihn71bHqJF0Y3r4@cluster0-ltbmp.mongodb.net/shop',
+    collection: 'sessions'
+})
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -15,21 +26,42 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+// configure mongodb store for session here as well
+app.use(session({
+    secret: 'My Secret Value is Null',
+    resave: false,
+    saveUninitialized: false,
+    store: store
+}))
+
+app.use(csrfProtection)
+
+app.use(flash())
+// so i get complete user model as session.user gives us only data
+app.use((req, res, next) => {
+    if (!req.session.user) {
+        return next();
+    }
+    User.findById(req.session.user._id)
+        .then(user => {
+            req.user = user;
+            next();
+        })
+        .catch(err => console.log(err));
+});
 
 app.use((req, res, next) => {
-    const id =new objectID('5c3ef27b9cd4e61a00d00569')
-    User.findById('5c3ef27b9cd4e61a00d00569').then((user) => {
-        req.user = user 
-        next()
-    }).catch((e) => {
-        console.log(e)
-    })
+    res.locals.isAuthenticated = req.session.isLoggedIn
+    res.locals.csrfToken = req.csrfToken()
+    next()
 })
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Routes start here
 
 app.use('/admin', adminRoutes);
 
@@ -41,17 +73,9 @@ app.use(errorController.get404);
 
 
 mongoConnect(() => {
-            const user = new User({
-                name: 'Ashish',
-                email: 'waesfdg',
-                cart: {
-                    items: []
-                }
-            })
-            user.save().then(()=>{
-                app.listen(3000, () => {
-                    console.log('Server started');
-                });
-            })
+
+    app.listen(3000, () => {
+        console.log('Server started');
+    });
 
 })
