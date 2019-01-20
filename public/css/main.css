@@ -230,14 +230,15 @@ form {
   margin: auto;
   width:90%;
   border: 1px solid #27a6af;
-  padding: .8rem;
+  padding: .6rem;
   background-color: #91e6ec;
   text-align: center;
+  margin-bottom: 2px;
 }
 
 .user-message--error {
-  border-color: #f52727;
-  background-color:  #ff9292;
+  border-color: #ee3939;
+  background-color:  #eb9c9c;
 }
 
 @media (min-width: 640px) {
