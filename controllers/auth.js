@@ -1,6 +1,14 @@
 const User = require('../models/user');
 const bcrypt = require('bcryptjs')
 const { validationResult} = require('express-validator/check')
+const nodemailer = require('nodemailer')
+const sendgridTransport = require('nodemailer-sendgrid-transport')
+const {keys} =require('../config/keys')
+const  transporter = nodemailer.createTransport(sendgridTransport({
+  auth:{
+    api_key: keys.API_KEY
+  }
+}))
 
 exports.getLogin = (req, res, next) => {
   res.render('auth/login', {
@@ -56,7 +64,13 @@ exports.postSignup = (req, res, next) => {
   })
 
   user.save().then((result) => {
-      res.redirect('/login')
+    res.redirect('/login')
+    return  transporter.sendMail({
+        to:email,
+        from:'no-reply@ashish.com',
+        subject:'Sign up Succeeded',
+        html:` <h1> You successfully signed up<h1>`
+      })
     })
     .catch(e => console.log(e))
 

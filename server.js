@@ -7,6 +7,7 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf')
 const flash = require('connect-flash')
+const {keys} =require('./config/keys')
 
 const errorController = require('./controllers/error');
 const mongoConnect = require('./util/db')
@@ -15,7 +16,7 @@ const app = express();
 const csrfProtection = csrf()
 
 const store = new MongoDBStore({
-    uri: 'mongodb+srv://penzero:9Ihn71bHqJF0Y3r4@cluster0-ltbmp.mongodb.net/shop',
+    uri: keys.MONGODB_URI,
     collection: 'sessions'
 })
 
@@ -33,7 +34,7 @@ app.use(bodyParser.urlencoded({
 }));
 // configure mongodb store for session here as well
 app.use(session({
-    secret: 'My Secret Value is Null',
+    secret:  keys.SECERET,
     resave: false,
     saveUninitialized: false,
     store: store

@@ -1,6 +1,7 @@
 const mongoose =require('mongoose')
+const {keys} =require('../config/keys')
 const mongoConnect = (cb) => {
-    mongoose.connect('mongodb+srv://penzero:9Ihn71bHqJF0Y3r4@cluster0-ltbmp.mongodb.net/shop?retryWrites=true', {
+    mongoose.connect(`${keys.MONGODB_URI}?retryWrites=true`, {
         useNewUrlParser: true
     })
         .then(result => {
