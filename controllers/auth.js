@@ -41,7 +41,6 @@ exports.postSignup = (req, res, next) => {
 
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    console.log(errors.array());
 
     return res.status(422).render('auth/signup', {
       path: '/signup',
@@ -72,7 +71,11 @@ exports.postSignup = (req, res, next) => {
         html:` <h1> You successfully signed up<h1>`
       })
     })
-    .catch(e => console.log(e))
+    .catch(err => {
+      const error =new Error(err)
+      error.httpStatusCode = 500
+      return next(error)
+    })
 
 };
 
@@ -129,7 +132,11 @@ exports.postLogin = (req, res, next) => {
         })
         .catch(e => console.log(e))
 
-    }).catch(e => console.log(e))
+    }).catch(err => {
+      const error =new Error(err)
+      error.httpStatusCode = 500
+      return next(error)
+    })
 }
 
 exports.postLogout = (req, res, next) => {
