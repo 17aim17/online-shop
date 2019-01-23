@@ -17,15 +17,15 @@
         <form class="login-form" action="/signup" method="POST" novalidate>
             <div class="form-control">
                 <label for="email">E-Mail</label>
-                <input type="email" name="email" id="email" required value="<%= oldInput.email%>">
+                <input type="email" autocomplete="off"  name="email" id="email" required value="<%= oldInput.email%>">
             </div>
             <div class="form-control">
                 <label for="password">Password</label>
-                <input type="password" name="password" id="password" required value="<%= oldInput.password%>">
+                <input type="password" autocomplete="off"  name="password" id="password" required value="<%= oldInput.password%>">
             </div>
             <div class="form-control">
                 <label for="confirmPassword">Confirm Password</label>
-                <input type="password" name="confirmPassword" id="confirmPassword" required value="<%= oldInput.confirmPassword%>">
+                <input type="password" autocomplete="off"  name="confirmPassword" id="confirmPassword" required value="<%= oldInput.confirmPassword%>">
             </div>
             <input type="hidden" name="_csrf" value='<%=csrfToken%>'>
             <button class="btn" type="submit">Register</button>

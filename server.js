@@ -7,7 +7,12 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf')
 const flash = require('connect-flash')
-const {keys} =require('./config/keys')
+const multer = require('multer')
+
+
+const {
+    keys
+} = require('./config/keys')
 
 const errorController = require('./controllers/error');
 const mongoConnect = require('./util/db')
@@ -28,13 +33,38 @@ const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images',express.static(path.join(__dirname, 'images')));
 
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+
+// Multer setup
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'images')
+    },
+    filename: (req, file, cb) => {
+        const type = file.mimetype.split('/')[1]      
+        cb(null, `${file.fieldname}-${Date.now()}.${type}`)
+    }
+})
+
+const fileFilter =(req,file,cb)=>{
+    if(file.mimetype=== 'image/png' || file.mimetype=== 'image/jpg' ||file.mimetype=== 'image/jpeg'){
+        cb(null,true)
+    }else{
+        cb(null,false)
+    }
+}
+app.use(multer({
+    storage: fileStorage,
+    fileFilter: fileFilter
+}).single('image')) // 'image' the name of the form input field
+
 // configure mongodb store for session here as well
 app.use(session({
-    secret:  keys.SECERET,
+    secret: keys.SECERET,
     resave: false,
     saveUninitialized: false,
     store: store
@@ -50,8 +80,8 @@ app.use((req, res, next) => {
     }
     User.findById(req.session.user._id)
         .then(user => {
-            if(!user) {
-                return Promise.reject()
+            if (!user) {
+                next()
             }
             req.user = user;
             next();
@@ -75,11 +105,16 @@ app.use(shopRoutes);
 
 app.use(authRoutes);
 
-app.get('/500',errorController.get500)
+// app.get('/500', errorController.get500)
 
 app.use(errorController.get404);
 
-app.use((error , req , res, next)=>{
+app.use((error, req, res, next) => {
+    // res.status(500).render('500', {
+    //     pageTitle: 'Error!',
+    //     path: '/500',
+    //     isAuthenticated: req.session.isLoggedIn
+    // });
     res.redirect('/500')
 })
 
