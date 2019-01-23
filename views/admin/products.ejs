@@ -23,7 +23,7 @@
                         <%= product.price %>
                     </h2>
                     <p class="product__description">
-                        <%= product.description %>
+                        <%=product.description.length>50?product.description.substring(0,50):product.description %>
                     </p>
                 </div>
                 <div class="card__actions">
