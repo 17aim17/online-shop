@@ -165,7 +165,13 @@ form {
 }
 
 .card {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  border: 1px solid #eee;
+}
+
+.card:hover {
+  border: 0;
+  box-shadow: 0 2px 30px #000000b9;
+  transition: box-shadow .3s ease-out;
 }
 
 .card__header,
@@ -182,10 +188,13 @@ form {
 
 .card__image {
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .card__image img {
-  width: 100%;
+  width: auto;
+  height: 10rem;
 }
 
 .card__actions {
@@ -213,6 +222,7 @@ form {
 .btn:active {
   background-color: dodgerblue;
   color: white;
+  transition: all .3s ease-in;
 }
 
 .btn.danger {
@@ -224,11 +234,12 @@ form {
 .btn.danger:active {
   background: red;
   color: white;
+  transition: all .3s ease-in;
 }
 
 .user-message {
   margin: auto;
-  width:90%;
+  width: 90%;
   border: 1px solid #27a6af;
   padding: .6rem;
   background-color: #91e6ec;
@@ -238,7 +249,7 @@ form {
 
 .user-message--error {
   border-color: #ee3939;
-  background-color:  #eb9c9c;
+  background-color: #eb9c9c;
 }
 
 @media (min-width: 640px) {
@@ -251,6 +262,29 @@ form {
   }
 
   .user-message {
-    width:30rem;
+    width: 30rem;
   }
+}
+
+.pagination {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.pagination a {
+  text-decoration: none;
+  color: dodgerblue;
+  text-align: center;
+  padding: .4rem .6rem;
+  border: 1px solid dodgerblue;
+  margin: 0 1rem;
+}
+
+.pagination a:hover ,
+.pagination a.active ,
+.pagination a:active{
+  color: white;
+  background-color: dodgerblue;
+  border: 1px solid dodgerblue;
+  transition: all .3s ease-in;
 }
