@@ -13,35 +13,62 @@
         </div>
         <%}%>
         <form class="product-form" enctype="multipart/form-data" action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>"
-            method="POST">
-            <div class="form-control">
-                <label for="title">Title</label>
-                <input type="text" name="title" autofocus  autocomplete="off" id="title" value="<% if (editing || hasError) { %><%= product.title %><% } %>">
-            </div>
-            <!-- <div class="form-control">
+        method="POST">
+        <div class="form-control">
+            <label for="title">Title</label>
+            <input type="text" name="title" autofocus autocomplete="off" id="title"
+                value="<% if (editing || hasError) { %><%= product.title %><% } %>">
+        </div>
+        <!-- <div class="form-control">
                 <label for="imageUrl">Image URL</label>
                 <input type="text" name="imageUrl" id="imageUrl" value="<% if (editing ||hasError) { %><%= product.imageUrl %><% } %>">
             </div> -->
-            <div class="form-control">
-                <label for="image">Image</label>
-                <input type="file" name="image" id="image">
-            </div>
-            <div class="form-control">
-                <label for="price">Price</label>
-                <input type="number" name="price" autocomplete="off"  id="price" step="0.01" value="<% if (editing||hasError) { %><%= product.price %><% } %>">
-            </div>
-            <div class="form-control">
-                <label for="description">Description</label>
-                <textarea name="description" id="description" rows="5"><% if (editing ||hasError) { %><%= product.description %><% } %></textarea>
-            </div>
-            <% if (editing) { %>
-            <input type="hidden" value="<%= product._id %>" name="productId">
-            <% } %>
-            <input type="hidden" name="_csrf" value='<%=csrfToken%>'>
-            <button class="btn" type="submit">
-                <% if (editing) { %>Update Product
-                <% } else { %>Add Product
-                <% } %></button>
+        <div class="form-control">
+            <label for="image">Image</label>
+            <input type="file" name="image" id="image">
+        </div>
+        <div class="form-control">
+            <label for="price">Price</label>
+            <input type="number" name="price" autocomplete="off" id="price" step="0.01"
+                value="<% if (editing||hasError) { %><%= product.price %><% } %>">
+        </div>
+        <div class="form-control">
+            <label for="description">Description</label>
+            <textarea name="description" id="description"
+                rows="5"><% if (editing ||hasError) { %><%= product.description %><% } %></textarea>
+        </div>
+        <% if (editing) { %>
+        <input type="hidden" value="<%= product._id %>" name="productId">
+        <% } %>
+        <input type="hidden" name="_csrf" value='<%=csrfToken%>'>
+        <button class="btn" type="submit">
+            <% if (editing) { %>Update Product
+            <% } else { %>Add Product
+            <% } %></button>
         </form>
     </main>
+    <script src="https://cdn.ckeditor.com/ckeditor5/12.4.0/classic/ckeditor.js"></script>
+    <script>
+        // ClassicEditor.builtinPlugins.map(plugin => console.log(plugin.pluginName)
+        // );
+        ClassicEditor
+            .create(document.querySelector('textarea'), {
+                removePlugins: ['CKFinderUploadAdapter', 'CKFinder', 'EasyImage', 'Image', 'ImageCaption', 'ImageStyle', 'ImageToolbar', 'ImageUpload', 'MediaEmbed', 'PasteFromOffice', 'Table', 'TableToolbar'],
+                toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote'],
+                heading: {
+                    options: [
+                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' }
+                    ]
+                }
+
+            })
+            .then(editor => {
+                console.log(editor);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
     <%- include('../includes/end.ejs') %>
